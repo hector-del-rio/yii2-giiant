@@ -225,7 +225,8 @@ PHP;
     }
 });
 EOF;
-?>
+        <?= "\$this->registerJs(\$initScript);\n" ?>
+        <?= "?>\n" ?>
     <?php else: ?>
 
         <?= "<?= " ?> ListView::widget([
