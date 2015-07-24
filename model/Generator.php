@@ -212,6 +212,11 @@ class Generator extends \yii\gii\generators\model\Generator
         return $this->classNames2[$tableName] = $returnName;
     }
 
+    public function generateRelationName($relations, $table, $key, $multiple)
+    {
+        return parent::generateRelationName($relations, $table, $key, $multiple);
+    }
+
     protected function generateRelations()
     {
         $relations = parent::generateRelations();
