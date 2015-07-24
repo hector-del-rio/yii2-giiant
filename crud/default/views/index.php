@@ -29,12 +29,12 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use<?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
+use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 
 /**
 * @var yii\web\View $this
 * @var yii\data\ActiveDataProvider $dataProvider
-* @var<?= ltrim($generator->searchModelClass, '\\') ?>$searchModel
+* @var <?= ltrim($generator->searchModelClass, '\\') ?>$searchModel
 */
 
 $this->title =<?= $generator->generateString(Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass)))) ?>;
