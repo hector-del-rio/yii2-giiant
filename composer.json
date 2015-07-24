@@ -1,7 +1,11 @@
 {
     "name": "hector-del-rio/yii2-giiant",
     "description": "Gii CRUD generator for Yii 2 Framework",
-    "keywords": ["yii2", "gii", "crud"],
+    "keywords": [
+        "yii2",
+        "gii",
+        "crud"
+    ],
     "homepage": "https://github.com/schmunk42/yii2-giiant",
     "type": "yii2-extension",
     "license": "BSD-3-Clause",
@@ -12,10 +16,17 @@
             "homepage": "http://www.usrbin.de"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/Loop8/yii2-l8-actioncolumn.git"
+        }
+    ],
     "require": {
         "dmstr/yii2-bootstrap": "*",
         "yiisoft/yii2": "~2.0.4",
-        "yiisoft/yii2-gii": "~2.0.4"
+        "yiisoft/yii2-gii": "~2.0.4",
+        "Loop8/yii2-l8-actioncolumn": "*"
     },
     "autoload": {
         "psr-4": {
