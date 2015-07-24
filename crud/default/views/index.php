@@ -106,7 +106,7 @@ PHP;
 
     <?php if ($generator->indexWidgetType === 'grid'): ?>
 
-        <?= "<?php \yii\widgets\Pjax::begin(['id'=>'pjax-main', 'enableReplaceState'=> false, 'linkSelector'=>'#pjax-main ul.pagination a, th a', 'clientOptions' => ['pjax:success'=>'function(){alert(\"yo\")}']]) ?>\n"; ?>
+        <?= "<?php \yii\widgets\Pjax::begin(['id' => 'pjax-" . Inflector::camel2id(StringHelper::basename($generator->modelClass)) . "-index', 'enableReplaceState'=> false, 'linkSelector'=>'#pjax-main ul.pagination a, th a', 'clientOptions' => ['pjax:success'=>'function(){alert(\"yo\")}']]) ?>\n"; ?>
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -217,15 +217,15 @@ PHP;
     }
 });
 EOF;
-
+?>
     <?php else: ?>
 
         <?= "<?= " ?> ListView::widget([
-        'dataProvider' => $dataProvider,
-        'itemOptions' => ['class' => 'item'],
-        'itemView' => function ($model, $key, $index, $widget) {
-        return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
-        },
+            'dataProvider' => $dataProvider,
+            'itemOptions' => ['class' => 'item'],
+            'itemView' => function ($model, $key, $index, $widget) {
+                return Html::a(Html::encode($model-><?= $nameAttribute ?>), ['view', <?= $urlParams ?>]);
+            },
         ]); ?>
 
     <?php endif; ?>
