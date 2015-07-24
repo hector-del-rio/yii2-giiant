@@ -29,15 +29,15 @@ echo "<?php\n";
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
+use<?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
 
 /**
 * @var yii\web\View $this
 * @var yii\data\ActiveDataProvider $dataProvider
-* @var <?= ltrim($generator->searchModelClass, '\\') ?> $searchModel
+* @var<?= ltrim($generator->searchModelClass, '\\') ?>$searchModel
 */
 
-$this->title = <?= $generator->generateString(Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass)))) ?>;
+$this->title =<?= $generator->generateString(Inflector::pluralize(Inflector::camel2words(StringHelper::basename($generator->modelClass)))) ?>;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -50,7 +50,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <div class="clearfix">
         <p class="pull-left">
-            <?= "<?= " ?>Html::a('<span class="glyphicon glyphicon-plus"></span> ' . <?= $generator->generateString('New') ?>, ['create'], ['class' => 'btn btn-success']) ?>
+            <?= "<?= " ?>Html::a('<span class="glyphicon glyphicon-plus"></span> '
+            . <?= $generator->generateString('New') ?>, ['create'], ['class' => 'btn btn-success']) ?>
         </p>
 
         <div class="pull-right">
@@ -71,8 +72,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         '-',
                         true
                     );
-                $route = $generator->createRelationRoute($relation,'index');
-                $label      = Inflector::titleize(StringHelper::basename($relation->modelClass), '-', true);
+                $route = $generator->createRelationRoute($relation, 'index');
+                $label = Inflector::titleize(StringHelper::basename($relation->modelClass), '-', true);
                 $items .= <<<PHP
             [
                 'url' => ['{$route}'],
@@ -83,23 +84,22 @@ PHP;
             <?php endforeach; ?>
 
             <?= "<?= \n" ?>
-            \yii\bootstrap\ButtonDropdown::widget(
-                [
-                    'id'       => 'giiant-relations',
-                    'encodeLabel' => false,
-                    'label'    => '<span class="glyphicon glyphicon-paperclip"></span> ' . <?= $generator->generateString('Relations') ?>,
-                    'dropdown' => [
-                        'options'      => [
-                            'class' => 'dropdown-menu-right'
-                        ],
-                        'encodeLabels' => false,
-                        'items'        => [<?= $items ?>]
-                    ],
+            \yii\bootstrap\ButtonDropdown::widget([
+                'id' => 'giiant-relations',
+                'encodeLabel' => false,
+                'label' => '<span class="glyphicon glyphicon-paperclip"></span> '
+                . <?= $generator->generateString('Relations') ?>,
+                'dropdown' => [
                     'options' => [
-                        'class' => 'btn-default'
-                    ]
+                        'class' => 'dropdown-menu-right'
+                    ],
+                    'encodeLabels' => false,
+                    'items' => [<?= $items ?>]
+                ],
+                'options' => [
+                    'class' => 'btn-default'
                 ]
-            );
+            ]);
             <?= "?>" ?>
         </div>
     </div>
@@ -118,52 +118,80 @@ PHP;
             <div class="panel-body">
 
                 <div class="table-responsive">
-                <?= "<?= " ?>GridView::widget([
-                'layout' => '{summary}{pager}{items}{pager}',
-                'dataProvider' => $dataProvider,
-                'pager'        => [
-                    'class'          => yii\widgets\LinkPager::className(),
-                    'firstPageLabel' => <?= $generator->generateString('First') ?>,
-                    'lastPageLabel'  => <?= $generator->generateString('Last') ?>
-                ],
-                'filterModel' => $searchModel,
-                'tableOptions' => ['class' => 'table table-striped table-bordered table-hover'],
-                'headerRowOptions' => ['class'=>'x'],
-                'columns' => [
+                    <?= "<?= " ?>GridView::widget([
+                    'layout' => '{summary}{pager}{items}{pager}',
+                    'dataProvider' => $dataProvider,
+                    'pager' => [
+                        'class' => yii\widgets\LinkPager::className(),
+                        'firstPageLabel' => <?= $generator->generateString('First') ?>,
+                        'lastPageLabel' => <?= $generator->generateString('Last') ?>
+                    ],
+                    'filterModel' => $searchModel,
+                    'tableOptions' => ['class' => 'table table-striped table-bordered table-hover'],
+                    'headerRowOptions' => ['class'=>'x'],
+                    'columns' => [
+                        //['class' => 'yii\grid\SerialColumn'],
+                        <?php
+                        $count = 0;
+                        if (($tableSchema = $generator->getTableSchema()) === false) {
+                            foreach ($generator->getColumnNames() as $name) {
+                                echo "            '" . $name . "',\n";
+                            }
+                        } else {
+                            foreach ($tableSchema->columns as $column) {
+                                $format = $generator->generateColumnFormat($column);
+                                switch ($column->type) {
+                                    // TODO: internationalization
+                                    case 'time':
+                                        echo "            [\n";
+                                        echo "                'attribute' => '" . $column->name . "',\n";
+                                        echo "                'format' => [\n";
+                                        echo "                    'date', 'php:H:i:s'\n";
+                                        echo "                ],\n";
+                                        echo "            ],\n";
+                                        break;
+                                    case 'date':
+                                        echo "            [\n";
+                                        echo "                'attribute' => '" . $column->name . "',\n";
+                                        echo "                'format' => [\n";
+                                        echo "                    'date', 'php:d.m.Y'\n";
+                                        echo "                ],\n";
+                                        echo "            ],\n";
+                                        break;
+                                    case 'datetime':
+                                        echo "            [\n";
+                                        echo "                'attribute' => '" . $column->name . "',\n";
+                                        echo "                'format' => [\n";
+                                        echo "                    'date', 'php:d.m.Y H:i:s'\n";
+                                        echo "                ],\n";
+                                        echo "            ],\n";
+                                        break;
+                                    default:
+                                        echo "            '" . $column->name . ($format === 'text' ? "" : ":" . $format) . "',\n";
+                                        break;
+                                }
+                            }
+                        }
+                        ?>
 
-                <?php
-                $actionButtonColumn = <<<PHP
-        [
-            'class' => '{$generator->actionButtonClass}',
-            'urlCreator' => function(\$action, \$model, \$key, \$index) {
-                // using the column name as key, not mapping to 'id' like the standard generator
-                \$params = is_array(\$key) ? \$key : [\$model->primaryKey()[0] => (string) \$key];
-                \$params[0] = \Yii::\$app->controller->id ? \Yii::\$app->controller->id . '/' . \$action : \$action;
-                return Url::toRoute(\$params);
-            },
-            'contentOptions' => ['nowrap'=>'nowrap']
-        ],
-PHP;
-
-                // action buttons first
-                echo $actionButtonColumn;
-
-                $count = 0;
-                echo "\n"; // code-formatting
-
-                foreach ($safeAttributes as $attribute) {
-                    $format = trim($generator->columnFormat($attribute,$model));
-                    if ($format == false) continue;
-                    if (++$count < $generator->gridMaxColumns) {
-                        echo "\t\t\t{$format},\n";
-                    } else {
-                        echo "\t\t\t/*{$format}*/\n";
-                    }
-                }
-
-                ?>
-                ],
-            ]); ?>
+                                //['class' => 'yii\grid\ActionColumn'],
+                                [
+                                    'class' => L8ActionColumn::className(),
+                                    'template' => '{view} {update} {delete}',
+                                    'buttons' => [
+                                        'view' => function($url, $model, $key) {
+                                            return L8ActionColumn::viewButton($url, $model, $key, true);
+                                        },
+                                        'update' => function($url, $model, $key) {
+                                            return L8ActionColumn::updateButton($url, $model, $key, true);
+                                        },
+                                        'delete' => function($url, $model, $key) {
+                                            return L8ActionColumn::ajaxDeleteButton($url, $model, $key, true, ['data-name' => Html::encode('entry')]); // ADD HERE THE VALUE FOR CONFIRM BOX
+                                        }
+                                    ]
+                                ],
+                            ],
+                        ]); ?>
                 </div>
 
             </div>
@@ -171,6 +199,24 @@ PHP;
         </div>
 
         <?= "<?php \yii\widgets\Pjax::end() ?>\n"; ?>
+
+        <?= "<?php\n" ?>
+        <?= "\$initScript = <<<EOF\n" ?>
+\$(document).on('click', '.l8ajax-delete', function (event) {
+    if(confirm('Are you sure you want to delete "' + \$(event.currentTarget).attr('data-name') + '"?')) {
+        \$.ajax(\$(event.currentTarget).attr('data-url'), {
+            dataType: "json",
+            type: "post"
+        }).done(function(data) {
+            if(data.response = 'Ok') {
+                \$.pjax.reload('#pjax-<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index', {'timeout': 5000});
+            } else {
+                alert('Error : ' + data.response);
+            }
+        });
+    }
+});
+EOF;
 
     <?php else: ?>
 
