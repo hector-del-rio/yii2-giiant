@@ -179,6 +179,13 @@ PHP;
                                 [
                                     'class' => L8ActionColumn::className(),
                                     'template' => '{view} {update} {delete}',
+                                    'urlCreator' => function(\$action, \$model, \$key, \$index) {
+                                        // using the column name as key, not mapping to 'id' like the standard generator
+                                        \$params = is_array(\$key) ? \$key : [\$model->primaryKey()[0] => (string) \$key];
+                                        \$params[0] = \Yii::\$app->controller->id ? \Yii::\$app->controller->id . '/' . \$action : \$action;
+                                        return Url::toRoute(\$params);
+                                    },
+                                    'contentOptions' => ['nowrap'=>'nowrap'],
                                     'buttons' => [
                                         'view' => function($url, $model, $key) {
                                             return L8ActionColumn::viewButton($url, $model, $key, true);
