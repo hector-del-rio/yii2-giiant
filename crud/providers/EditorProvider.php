@@ -17,11 +17,13 @@ class EditorProvider extends \schmunk42\giiant\base\Provider
         if (!isset($this->generator->getTableSchema()->columns[$attribute])) {
             return null;
         }
+
         $column = $this->generator->getTableSchema()->columns[$attribute];
-        switch (true) {
-            case (in_array($column->name, $this->columnNames)):
-                $this->generator->requires[] = '2amigos/yii2-ckeditor-widget';
-                return <<<EOS
+
+        if ($column->type == "text") {
+            $this->generator->requires[] = '2amigos/yii2-ckeditor-widget';
+
+            return <<<EOS
 \$form->field(\$model, '{$attribute}')->widget(
     \dosamigos\ckeditor\CKEditor::className(),
     [
@@ -30,8 +32,8 @@ class EditorProvider extends \schmunk42\giiant\base\Provider
     ]
 )
 EOS;
-            default:
-                return null;
         }
+
+        return null;
     }
 } 
