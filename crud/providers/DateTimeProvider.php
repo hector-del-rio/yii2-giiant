@@ -21,7 +21,11 @@ class DateTimeProvider extends \schmunk42\giiant\base\Provider
             case Schema::TYPE_TIME:
             case Schema::TYPE_DATETIME:
             case Schema::TYPE_TIMESTAMP:
-                $this->generator->requires[] = '2amigos/yii2-date-time-picker-widget';
+                $msg = '2amigos/yii2-date-time-picker-widget';
+
+                if (!in_array($msg, $this->generator->requires)) {
+                    $this->generator->requires[] = $msg;
+                }
 
                 return "\$form->field(\$model, '{$column->name}')->widget(dosamigos\\datetimepicker\\DateTimePicker::className(), [
     'options' => ['class' => 'form-control'],

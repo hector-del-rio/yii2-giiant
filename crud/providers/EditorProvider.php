@@ -23,15 +23,13 @@ class EditorProvider extends \schmunk42\giiant\base\Provider
 
         switch ($column->type) {
             case Schema::TYPE_TEXT:
-                $this->generator->requires[] = '2amigos/yii2-ckeditor-widget';
+                $msg = 'yiidoc/yii2-redactor (<b>Attention!</b> Configuration changes required. <small><a href="https://github.com/yiidoc/yii2-redactor">More info</a></small>)';
 
-                return "\$form->field(\$model, '{$attribute}')->widget(
-    \\dosamigos\\ckeditor\\CKEditor::className(),
-    [
-        'options' => ['rows' => 6],
-        'preset' => 'basic'
-    ]
-)";
+                if (!in_array($msg, $this->generator->requires)) {
+                    $this->generator->requires[] = $msg;
+                }
+
+                return "\$form->field(\$model, '{$attribute}')->widget(\\dosamigos\\ckeditor\\CKEditor::className())";
             default:
                 return null;
         }
