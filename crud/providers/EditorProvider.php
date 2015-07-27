@@ -29,7 +29,7 @@ class EditorProvider extends \schmunk42\giiant\base\Provider
                     $this->generator->requires[] = $msg;
                 }
 
-                return "\$form->field(\$model, '{$attribute}')->widget(\\dosamigos\\ckeditor\\CKEditor::className())";
+                return "\$form->field(\$model, '{$attribute}')->widget(\\yii\\redactor\\widgets\\Redactor::className())";
             default:
                 return null;
         }
