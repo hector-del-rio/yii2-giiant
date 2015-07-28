@@ -61,6 +61,11 @@ class Generator extends \yii\gii\generators\crud\Generator
      */
     public $gridRelationMaxColumns = 8;
     /**
+     * @var array array of strings that database field name contains to indicate is a file path. Regex will be:
+     *          "/(" . implode('|', {fileFieldMatches}) . ")/mi"
+     */
+    public $fileFieldMatches = "filename,file,path";
+    /**
      * @var array array of composer packages (only to show information to the developer in the web UI)
      */
     public $requires = [];
@@ -128,9 +133,10 @@ class Generator extends \yii\gii\generators\crud\Generator
         return array_merge(
             parent::hints(),
             [
-                'providerList' => 'Comma separated list of provider class names, make sure you are using the full namespaced path <code>app\providers\CustomProvider1,<br/>app\providers\CustomProvider2</code>.',
-                'viewPath'     => 'Output path for view files, eg. <code>@backend/views/crud</code>.',
-                'pathPrefix'   => 'Customized route/subfolder for controllers and views eg. <code>crud/</code>. <b>Note!</b> Should correspond to <code>viewPath</code>.',
+                'providerList'      => 'Comma separated list of provider class names, make sure you are using the full namespaced path <code>app\providers\CustomProvider1,<br/>app\providers\CustomProvider2</code>.',
+                'viewPath'          => 'Output path for view files, eg. <code>@backend/views/crud</code>.',
+                'pathPrefix'        => 'Customized route/subfolder for controllers and views eg. <code>crud/</code>. <b>Note!</b> Should correspond to <code>viewPath</code>.',
+                'fileFieldMatches'  => 'Comma separated list of strings that will be matched against column names in order to apply <code>app\providers\UploadProvider</code>. eg. for <code>foo,bar</code> the regex applied will be <code>/(foo|bar)/mi</code>'
             ]
         );
     }
@@ -143,7 +149,7 @@ class Generator extends \yii\gii\generators\crud\Generator
         return array_merge(
             parent::rules(),
             [
-                [['providerList'], 'filter', 'filter' => 'trim'],
+                [['providerList,fileFieldMatches'], 'filter', 'filter' => 'trim'],
                 [['actionButtonClass', 'viewPath', 'pathPrefix'], 'safe'],
                 [['viewPath'], 'required'],
             ]
