@@ -7,11 +7,6 @@
 
 namespace schmunk42\giiant\crud;
 
-use schmunk42\giiant\crud\providers\CallbackProvider;
-use schmunk42\giiant\crud\providers\DateTimeProvider;
-use schmunk42\giiant\crud\providers\EditorProvider;
-use schmunk42\giiant\crud\providers\OptsProvider;
-use schmunk42\giiant\crud\providers\RelationProvider;
 use Yii;
 use yii\base\Exception;
 use yii\db\ActiveQuery;
@@ -19,6 +14,7 @@ use yii\db\ActiveRecord;
 use yii\db\ColumnSchema;
 use yii\helpers\Inflector;
 use yii\helpers\Json;
+use yii\helpers\FileHelper;
 
 /**
  * This generator generates an extended version of CRUDs.
@@ -72,15 +68,42 @@ class Generator extends \yii\gii\generators\crud\Generator
 
     private $_p = [];
 
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        $this->providerList = self::getCoreProviders();
+
+        return parent::init();
+    }
+
+    /**
+     * @return array Class names of the providers declared directly under crud/providers folder.
+     */
     static public function getCoreProviders()
     {
-        return [
-            CallbackProvider::className(),
-            EditorProvider::className(),
-            DateTimeProvider::className(),
-            OptsProvider::className(),
-            RelationProvider::className()
-        ];
+        $files = FileHelper::findFiles(__DIR__ . DIRECTORY_SEPARATOR . 'providers', [
+            'only' => ['*.php'],
+            'recursive' => false
+        ]);
+
+        foreach ($files as $file) {
+            require_once($file);
+        }
+
+        return array_filter(get_declared_classes(), function($a){
+            return (stripos($a, __NAMESPACE__ . '\providers') !== false);
+        });
+    }
+
+    /**
+     * @return array List of providers. Keys and values contain the same strings.
+     */
+    public function generateProviderCheckboxListData()
+    {
+        $coreProviders = self::getCoreProviders();
+        return array_combine($coreProviders, $coreProviders);
     }
 
     public function getName()
@@ -110,7 +133,7 @@ class Generator extends \yii\gii\generators\crud\Generator
             return;
         }
         if ($this->providerList) {
-            foreach (explode(',', $this->providerList) AS $class) {
+            foreach($this->providerList as $class) {
                 $class = trim($class);
                 if (!$class) {
                     continue;
@@ -133,10 +156,10 @@ class Generator extends \yii\gii\generators\crud\Generator
         return array_merge(
             parent::hints(),
             [
-                'providerList'      => 'Comma separated list of provider class names, make sure you are using the full namespaced path <code>app\providers\CustomProvider1,<br/>app\providers\CustomProvider2</code>.',
+                'providerList'      => 'Choose the providers to be used.',
                 'viewPath'          => 'Output path for view files, eg. <code>@backend/views/crud</code>.',
                 'pathPrefix'        => 'Customized route/subfolder for controllers and views eg. <code>crud/</code>. <b>Note!</b> Should correspond to <code>viewPath</code>.',
-                'fileFieldMatches'  => 'Comma separated list of strings that will be matched against column names in order to apply <code>app\providers\UploadProvider</code>. eg. for <code>foo,bar</code> the regex applied will be <code>/(foo|bar)/mi</code>'
+                'fileFieldMatches'  => 'Comma separated list of strings that will be matched against column names in order to apply <code>app\providers\UploadProvider</code>. eg. <code>foo,bar</code> will generate an upload field for columns with names matching the regex <code>/(foo|bar)/mi</code>'
             ]
         );
     }
@@ -149,8 +172,8 @@ class Generator extends \yii\gii\generators\crud\Generator
         return array_merge(
             parent::rules(),
             [
-                [['providerList,fileFieldMatches'], 'filter', 'filter' => 'trim'],
-                [['actionButtonClass', 'viewPath', 'pathPrefix'], 'safe'],
+                [['fileFieldMatches'], 'filter', 'filter' => 'trim'],
+                [['providerList, actionButtonClass', 'viewPath', 'pathPrefix'], 'safe'],
                 [['viewPath'], 'required'],
             ]
         );
