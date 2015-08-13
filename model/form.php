@@ -40,3 +40,22 @@ echo $form->field($generator, 'messageCategory');
     </div>
 </div>
 
+<div class="panel panel-default">
+    <div class="panel-heading">Upload Behavior</div>
+    <div class="panel-body">
+        <?php
+
+        echo $form->field($generator, 'useUploadBehavior')->checkbox();
+
+        ?>
+        <div class="alert alert-warning" role="alert">
+            <h4>Attention!</h4>
+
+            <p>
+                You must run <code>php composer.phar require 2amigos/yii2-translateable-behavior "*"</code> to
+                install this package.
+            </p>
+        </div>
+    </div>
+</div>
+

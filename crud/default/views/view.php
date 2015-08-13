@@ -45,7 +45,7 @@ Inflector::pluralize(
 $this->params['breadcrumbs'][] = ['label' => (string)$model-><?=$generator->getNameAttribute() ?>, 'url' => ['view', <?= $urlParams ?>]];
 $this->params['breadcrumbs'][] = <?= $generator->generateString('View') ?>;
 ?>
-<div class="giiant-crud <?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-view">
+<div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-view">
 
     <!-- menu buttons -->
     <p class='pull-left'>

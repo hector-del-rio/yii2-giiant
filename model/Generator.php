@@ -34,6 +34,10 @@ class Generator extends \yii\gii\generators\model\Generator
      * @var bool whether to use or not 2amigos/yii2-translateable-behavior
      */
     public $useTranslatableBehavior = true;
+    /**
+     * @var bool whether to use or not 2amigos/yii2-translateable-behavior
+     */
+    public $useUploadBehavior = true;
 
     /**
      * @var string the name of the table containing the translations. {{table}} will be replaced with the value in

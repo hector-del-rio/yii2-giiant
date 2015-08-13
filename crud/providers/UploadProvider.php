@@ -8,7 +8,6 @@ class UploadProvider extends \schmunk42\giiant\base\Provider
 {
     public function activeField($attribute)
     {
-        // TODO: internationalization
 
         if (!isset($this->generator->getTableSchema()->columns[$attribute])) {
             return null;

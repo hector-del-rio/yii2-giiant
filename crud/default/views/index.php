@@ -42,7 +42,7 @@ $this->title = <?= $generator->generateString(Inflector::pluralize(Inflector::ca
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
-<div class="giiant-crud <?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-index">
+<div class="<?= Inflector::camel2id(StringHelper::basename($generator->modelClass), '-', true) ?>-index">
 
     <?=
     "<?php " . ($generator->indexWidgetType === 'grid' ? "// " : "") ?>
