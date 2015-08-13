@@ -53,6 +53,8 @@ echo $form->field($generator, 'providerList')->checkboxList($generator->generate
             'Saturday'
         ]
     );
+    echo $form->field($generator, 'dateFromSuffix');
+    echo $form->field($generator, 'dateToSuffix');
     ?>
     </div>
 </div>

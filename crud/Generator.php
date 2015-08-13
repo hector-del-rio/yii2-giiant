@@ -97,6 +97,18 @@ class Generator extends \yii\gii\generators\crud\Generator
      *          "/(" . implode('|', {fileFieldMatches}) . ")/mi"
     */
     public $fileFieldMatches = "filename,file,path";
+    /**
+     * @var string the date-from suffix to be matched against column names (case insensitive). i.e. given that ```dateFromSuffix``` and
+     * ```dateToSuffix``` values are "from" and "to" respectively, two columns with names ```dateFrom``` and
+     * ```dateTo``` will be considered to be a range and a date range widget will be rendered.
+     */
+    public $dateFromSuffix = "from";
+    /**
+     * @var string the date-to suffix to be matched against column names (case insensitive). i.e. given that ```dateFromSuffix``` and
+     * ```dateToSuffix``` values are "from" and "to" respectively, two columns with names ```dateFrom``` and
+     * ```dateTo``` will be considered to be a range and a date range widget will be rendered.
+     */
+    public $dateToSuffix = "to";
 
     private $_p = [];
 
@@ -195,6 +207,8 @@ class Generator extends \yii\gii\generators\crud\Generator
                 'viewPath' => 'Output path for view files, eg. <code>@backend/views/crud</code>.',
                 'pathPrefix' => 'Customized route/subfolder for controllers and views eg. <code>crud/</code>. <b>Note!</b> Should correspond to <code>viewPath</code>.',
                 'fileFieldMatches' => 'Comma separated list of strings that will be matched against column names in order to apply <code>app\providers\UploadProvider</code>. eg. <code>foo,bar</code> will generate an upload field for columns with names matching the regex <code>/(foo|bar)/mi</code>',
+                'dateFromSuffix' => 'The date-from suffix to be matched against column names (case insensitive). i.e. given that <code>dateFromSuffix</code> and <code>dateToSuffix</code> values are "from" and "to" respectively, two columns with names <code>dateFrom</code> and <code>dateTo</code> will be considered to be a range and a date range widget will be rendered.',
+                'dateToSuffix' => 'The date-to suffix to be matched against column names (case insensitive). i.e. given that <code>dateFromSuffix</code> and <code>dateToSuffix</code> values are "from" and "to" respectively, two columns with names <code>dateFrom</code> and <code>dateTo</code> will be considered to be a range and a date range widget will be rendered.',
             ]
         );
     }
@@ -207,7 +221,7 @@ class Generator extends \yii\gii\generators\crud\Generator
         return array_merge(
             parent::rules(),
             [
-                [['fileFieldMatches'], 'filter', 'filter' => 'trim'],
+                [['fileFieldMatches', 'dateFromSuffix' , 'dateToSuffix'], 'filter', 'filter' => 'trim'],
                 [['providerList', 'actionButtonClass', 'viewPath', 'pathPrefix'], 'safe'],
                 [['viewPath'], 'required'],
                 [['weekStart'], 'number', 'min' => 0, 'max' => 6],
