@@ -30,6 +30,7 @@ echo "<?php\n";
 use yii\helpers\Html;
 use yii\helpers\Url;
 use <?= $generator->indexWidgetType === 'grid' ? "yii\\grid\\GridView" : "yii\\widgets\\ListView" ?>;
+use loop8\l8actioncolumn\L8ActionColumn;
 
 /**
 * @var yii\web\View $this
@@ -106,7 +107,11 @@ PHP;
 
     <?php if ($generator->indexWidgetType === 'grid'): ?>
 
-        <?= "<?php \yii\widgets\Pjax::begin(['id'=>'pjax-main', 'enableReplaceState'=> false, 'linkSelector'=>'#pjax-main ul.pagination a, th a', 'clientOptions' => ['pjax:success'=>'function(){alert(\"yo\")}']]) ?>\n"; ?>
+        <?= "<?php \yii\widgets\Pjax::begin([
+            'id' => 'pjax-" . Inflector::camel2id(StringHelper::basename($generator->modelClass)) . "-index',
+            'enableReplaceState'=> false,
+            'linkSelector'=>'#pjax-main ul.pagination a, th a',
+        ]); ?>\n"; ?>
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -134,17 +139,28 @@ PHP;
                 <?php
                 $actionButtonColumn = <<<PHP
         [
-            'class' => '{$generator->actionButtonClass}',
+            'class' => L8ActionColumn::className(),
+            'template' => '{view} {update} {delete}',
             'urlCreator' => function(\$action, \$model, \$key, \$index) {
                 // using the column name as key, not mapping to 'id' like the standard generator
                 \$params = is_array(\$key) ? \$key : [\$model->primaryKey()[0] => (string) \$key];
                 \$params[0] = \Yii::\$app->controller->id ? \Yii::\$app->controller->id . '/' . \$action : \$action;
                 return Url::toRoute(\$params);
             },
-            'contentOptions' => ['nowrap'=>'nowrap']
+            'contentOptions' => ['nowrap'=>'nowrap'],
+            'buttons' => [
+                'view' => function(\$url, \$model, \$key) {
+                    return L8ActionColumn::viewButton(\$url, \$model, \$key, true);
+                },
+                'update' => function(\$url, \$model, \$key) {
+                    return L8ActionColumn::updateButton(\$url, \$model, \$key, true);
+                },
+                'delete' => function(\$url, \$model, \$key) {
+                    return L8ActionColumn::ajaxDeleteButton(\$url, \$model, \$key, true, ['data-name' => Html::encode('entry')]); // ADD HERE THE VALUE FOR CONFIRM BOX
+                }
+            ]
         ],
 PHP;
-
                 // action buttons first
                 echo $actionButtonColumn;
 
@@ -171,6 +187,26 @@ PHP;
         </div>
 
         <?= "<?php \yii\widgets\Pjax::end() ?>\n"; ?>
+        <?= "<?php\n" ?>
+        <?= "\$initScript = <<<EOF\n" ?>
+\$(document).on('click', '.l8ajax-delete', function (event) {
+    if(confirm('Are you sure you want to delete "' + \$(event.currentTarget).attr('data-name') + '"?')) {
+        \$.ajax(\$(event.currentTarget).attr('data-url'), {
+            dataType: "json",
+            type: "post"
+        }).done(function(data) {
+            if(data.response = 'Ok') {
+                \$.pjax.reload('#pjax-<?= Inflector::camel2id(StringHelper::basename($generator->modelClass)) ?>-index', {'timeout': 5000});
+            } else {
+                alert('Error : ' + data.response);
+            }
+        });
+    }
+});
+EOF;
+        <?= "\$this->registerJs(\$initScript);\n" ?>
+        <?= "?>\n" ?>
+
 
     <?php else: ?>
 
