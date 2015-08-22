@@ -342,7 +342,6 @@ class Generator extends \yii\gii\generators\model\Generator
         return array_merge(parent::generateRules($table),$rules);
     }
 
-
     /**
      * @param $relations all database's relations.
      * @return array associative array containing the extracted relations and the modified translations.
@@ -395,6 +394,14 @@ class Generator extends \yii\gii\generators\model\Generator
             'relations' => $relations,
             'translations' => []
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTableNames()
+    {
+        return parent::getTableNames();
     }
 
 }
